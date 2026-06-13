@@ -1,0 +1,3 @@
+# Web UI dependencies (Streamlit front end over the existing Python harness).
+-r requirements.txt
+streamlit>=1.30

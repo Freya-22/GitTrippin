@@ -1,0 +1,18 @@
+# AI Travel Harness — runtime dependencies
+# Layer 2 orchestration: deterministic state machine, checkpointing, replay
+langgraph>=0.2.0
+langchain-core>=0.3.0
+
+# Layer 5 persistence: cross-process checkpoint records (./runs/<id>/checkpoints.sqlite)
+langgraph-checkpoint-sqlite>=2.0.0
+
+# Layer 4 guardrails: structural sandboxing + schema validation
+pydantic>=2.6
+
+# Layer 1 web front end (Streamlit UI in app.py)
+streamlit>=1.30
+
+# Optional: swap-in LLM worker for the Experience agent (template agent needs nothing).
+# The demo runs fully offline against seed data; this is only needed if you set
+# EXPERIENCE_AGENT=claude in the environment.
+anthropic>=0.39.0

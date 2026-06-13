@@ -1,0 +1,10 @@
+# Keep the image clean and reproducible — never bake in run artifacts or caches.
+runs/
+**/__pycache__/
+*.pyc
+.pytest_cache/
+.git/
+.venv/
+venv/
+*.md
+trip_hardfail.json

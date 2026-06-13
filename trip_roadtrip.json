@@ -1,0 +1,21 @@
+{
+  "origin": "Houston",
+  "destination": "Austin",
+  "start_date": "2026-07-10",
+  "end_date": "2026-07-13",
+  "travelers": 2,
+  "total_budget": 1000,
+  "services": ["hotel", "experience", "food"],
+  "meals_out_per_day": 2,
+  "priorities": {
+    "flight": "standard",
+    "hotel": "boutique",
+    "car": "economy",
+    "experience": "rich",
+    "food": "budget"
+  },
+  "min_rating": 3.5,
+  "diet": ["vegetarian"],
+  "cuisines": ["mexican"],
+  "activities": ["live music", "hiking"]
+}

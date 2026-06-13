@@ -1,0 +1,18 @@
+{
+  "origin": "Dallas",
+  "destination": "Austin",
+  "start_date": "2026-07-10",
+  "end_date": "2026-07-13",
+  "travelers": 1,
+  "total_budget": 1500,
+  "priorities": {
+    "flight": "standard",
+    "hotel": "standard",
+    "car": "economy",
+    "experience": "standard"
+  },
+  "min_rating": 3.5,
+  "diet": ["vegetarian"],
+  "cuisines": ["mexican"],
+  "activities": ["live music"]
+}

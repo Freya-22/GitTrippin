@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>AI Travel Harness — System Architecture</title>
+<style>
+  :root{
+    --bg:#0e0e1a; --panel:#15152a; --panel2:#1b1b34;
+    --harness:#7c6fff; --harness-fill:#2d2a55;
+    --agent:#39c0c8; --agent-fill:#1f3a3d;
+    --ok:#46c46a; --warn:#e0a341; --crit:#e06b6b;
+    --text:#f2f2f7; --muted:#a9a9c0; --line:#34345a;
+  }
+  @page{ size:A4; margin:14mm 13mm; }
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; }
+  body{
+    background:var(--bg); color:var(--text);
+    font-family:"Segoe UI","Inter",system-ui,sans-serif;
+    font-size:10.5px; line-height:1.5; -webkit-print-color-adjust:exact; print-color-adjust:exact;
+  }
+  .page{ padding:0 2mm; }
+  .break{ page-break-before:always; }
+  .avoid{ page-break-inside:avoid; }
+  h1,h2,h3{ margin:0 0 .35em; line-height:1.15; font-weight:700; }
+  h1{ font-size:30px; letter-spacing:-.5px; }
+  h2{ font-size:17px; color:var(--harness); margin-top:18px;
+      border-bottom:1px solid var(--line); padding-bottom:5px; }
+  h2 .n{ color:var(--muted); font-weight:600; margin-right:8px; }
+  h3{ font-size:12px; }
+  p{ margin:.3em 0 .6em; }
+  .muted{ color:var(--muted); }
+  code,.mono{ font-family:"JetBrains Mono","Consolas",monospace; }
+  code{ background:#222244; color:#cfe; padding:1px 5px; border-radius:4px; font-size:9.3px; }
+  a{ color:var(--agent); }
+
+  /* ---- hero ---- */
+  .hero{ background:linear-gradient(135deg,#1a1840,#0e0e1a 70%);
+    border:1px solid var(--harness); border-radius:14px; padding:22px 24px; margin-bottom:6px; }
+  .hero .tag{ display:inline-block; font-size:10px; letter-spacing:2px; text-transform:uppercase;
+    color:var(--harness); border:1px solid var(--harness); border-radius:20px; padding:3px 12px; margin-bottom:12px; }
+  .hero .sub{ font-size:14px; color:var(--muted); max-width:640px; }
+  .hero .axiom{ margin-top:14px; padding:10px 14px; border-left:3px solid var(--agent);
+    background:#12122a; border-radius:0 8px 8px 0; font-size:11px; }
+  .meta{ display:flex; gap:18px; margin-top:14px; font-size:10px; color:var(--muted); flex-wrap:wrap; }
+  .meta b{ color:var(--text); }
+
+  /* ---- generic boxes ---- */
+  .box{ border-radius:9px; padding:8px 11px; font-size:9.6px; }
+  .agentbox{ background:var(--agent-fill); border:1px solid var(--agent); }
+  .harnbox{ background:var(--harness-fill); border:1px solid var(--harness); }
+  .arrow{ text-align:center; color:var(--harness); font-size:16px; font-weight:700; line-height:1; }
+  .arrow.h{ display:flex; align-items:center; justify-content:center; }
+
+  /* ---- hero flow diagram ---- */
+  .flow{ display:grid; grid-template-columns:1fr 22px 2.4fr 22px 1fr; align-items:center; gap:6px; margin:14px 0 4px; }
+  .flow .stage{ background:var(--panel2); border:1px solid var(--line); border-radius:9px; padding:10px; text-align:center; font-size:9.6px; }
+  .flow .stage b{ display:block; font-size:11px; margin-bottom:3px; }
+  .wrapbox{ position:relative; border:2px solid var(--harness); background:var(--harness-fill);
+    border-radius:12px; padding:20px 12px 12px; }
+  .wrapbox .label{ position:absolute; top:-10px; left:14px; background:var(--bg); color:var(--harness);
+    font-weight:700; font-size:9.5px; padding:1px 8px; border-radius:6px; border:1px solid var(--harness); }
+  .agents-row{ background:var(--agent-fill); border:1px dashed var(--agent); border-radius:9px;
+    padding:8px; text-align:center; font-size:10px; color:#bff; }
+  .pillars-row{ display:grid; grid-template-columns:repeat(4,1fr); gap:6px; margin-top:8px; }
+  .pillars-row .pill{ background:#201d44; border:1px solid var(--harness); border-radius:7px;
+    padding:6px 4px; text-align:center; font-size:8.8px; font-weight:600; }
+
+  /* ---- layer stack ---- */
+  .layers{ display:flex; flex-direction:column; gap:7px; margin:6px 0; }
+  .layer{ display:grid; grid-template-columns:118px 1fr; border-radius:9px; overflow:hidden; border:1px solid var(--line); }
+  .layer .lh{ padding:9px 10px; font-weight:700; font-size:10px; display:flex; align-items:center; }
+  .layer .lb{ padding:8px 11px; background:var(--panel); font-size:9.4px; display:flex; align-items:center; }
+  .layer.l1 .lh{ background:#243a24; color:#cfe9cf; } .layer.l2 .lh{ background:#23304a; color:#cfe0ff; }
+  .layer.l4 .lh{ background:var(--harness-fill); color:#dcd7ff; }
+  .layer.l3 .lh{ background:var(--agent-fill); color:#bff; } .layer.l5 .lh{ background:#3a2d12; color:#ffe6bf; }
+  .layer.l4{ border-color:var(--harness); }
+  .ag-chips span,.dat-chips span{ display:inline-block; background:#0f1f20; border:1px solid var(--agent);
+    color:#bff; border-radius:6px; padding:2px 8px; margin:2px 3px 2px 0; font-size:9px; }
+  .dat-chips span{ background:#2a2110; border-color:var(--warn); color:#ffe6bf; }
+
+  /* ---- pillar cards ---- */
+  .grid2{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:6px; }
+  .card{ background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:11px 13px; }
+  .card.acc{ border-top:3px solid var(--harness); }
+  .card h3{ color:var(--harness); display:flex; align-items:center; gap:7px; }
+  .card h3 .ic{ font-size:15px; }
+  .card ul{ margin:6px 0 0; padding-left:16px; }
+  .card li{ margin:3px 0; }
+
+  /* ---- gauntlet steps ---- */
+  .gaunt{ display:flex; flex-direction:column; gap:0; margin:6px 0; }
+  .step{ display:grid; grid-template-columns:30px 1fr; gap:10px; align-items:stretch; }
+  .step .num{ background:var(--harness); color:#fff; font-weight:700; border-radius:7px;
+    display:flex; align-items:center; justify-content:center; font-size:11px; }
+  .step .body{ background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:7px 11px; margin:3px 0; flex:1; }
+  .step .body b{ color:var(--text); }
+  .step.crit .num{ background:var(--crit); } .step.ok .num{ background:var(--ok); }
+  .stepconn{ height:8px; margin-left:14px; border-left:2px dashed var(--line); }
+
+  /* ---- requirements mapping ---- */
+  table{ width:100%; border-collapse:collapse; margin:6px 0; font-size:9.4px; }
+  th,td{ text-align:left; padding:7px 9px; border-bottom:1px solid var(--line); vertical-align:top; }
+  th{ background:var(--panel2); color:var(--harness); font-size:9px; text-transform:uppercase; letter-spacing:.5px; }
+  tr:nth-child(even) td{ background:#13132690; }
+  .req td:first-child{ color:var(--agent); font-weight:700; width:30%; }
+  .chk{ color:var(--ok); font-weight:700; }
+
+  .threat td:first-child{ color:var(--crit); font-weight:600; width:32%; }
+  .threat td:nth-child(2){ color:var(--muted); width:34%; }
+
+  .legend{ display:flex; gap:14px; flex-wrap:wrap; font-size:9px; color:var(--muted); margin-top:4px; }
+  .dot{ display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:4px; vertical-align:middle; }
+
+  .footer{ margin-top:16px; background:var(--panel2); border:1px solid var(--line); border-radius:10px;
+    padding:12px 16px; text-align:center; }
+  .footer .stat{ font-size:13px; font-weight:700; letter-spacing:.3px; }
+  .footer .stat b{ color:var(--harness); }
+  .footer .stack{ font-size:9.5px; color:var(--muted); margin-top:5px; }
+
+  .callout{ background:#12122a; border:1px solid var(--harness); border-radius:9px; padding:10px 14px;
+    margin:10px 0; font-size:10.5px; }
+  .callout b{ color:var(--harness); }
+</style>
+</head>
+<body>
+
+<!-- ============ PAGE 1 ============ -->
+<div class="page">
+
+  <div class="hero avoid">
+    <span class="tag">🛡 Hackathon Submission · System Architecture</span>
+    <h1>AI Travel Harness</h1>
+    <div class="sub">A <b>zero-trust framework that an untrusted AI agent lives inside.</b>
+      Five agents plan a trip — Flight · Hotel · Car · Experience · Food — but
+      <b>the agents are the product; the harness is what is being defended and judged.</b></div>
+    <div class="axiom">An agent proposes an <b>ID</b> and nothing more. The harness independently
+      re-grades every claim against data the agent does not control, builds every link itself,
+      persists all state, and raises a structured alarm on every violation.</div>
+    <div class="meta">
+      <span><b>5</b> layers</span><span><b>5</b> untrusted agents</span>
+      <span><b>4</b> harness pillars</span><span><b>27</b> passing adversarial tests</span>
+      <span><b>100%</b> offline &amp; deterministic</span>
+    </div>
+  </div>
+
+  <h2><span class="n">1</span>The real-world problem</h2>
+  <p class="muted">Agentic systems are useful <b style="color:var(--text)">because they take action</b> —
+    they book, link, and spend real money. That is also their threat surface. You cannot fix this by
+    asking the model to "be careful." The agent's word can never be the final word.</p>
+  <table class="threat avoid">
+    <tr><th>What the agent does wrong</th><th>Vector</th><th>Harness control</th></tr>
+    <tr><td>Prompt injection via trip data</td><td>malicious string in a text field</td><td>Structural sandbox — raw text never reaches an agent; only typed, range-checked fields do</td></tr>
+    <tr><td>Phishing / link hallucination</td><td>agent emits <code>http://evil.tld</code></td><td>Agents emit <b>IDs only</b>; <code>NoUrlModel</code> rejects URLs; harness mints links from a whitelist</td></tr>
+    <tr><td>Bad / unsafe booking</td><td>$100 hotel at 2.5★, fake inventory, inflated claims</td><td><b>Shadow Auditor</b> re-grades every claim vs ground-truth inventory</td></tr>
+    <tr><td>Cross-agent data leakage</td><td>Flight agent reads dietary / medical prefs</td><td><b>Material Handling</b> routes only scoped fields; money agents never see prefs</td></tr>
+    <tr><td>Runaway cost</td><td>infinite fallback / retry loop</td><td><b>Economic Governor</b> — hard token + USD ceiling per session</td></tr>
+    <tr><td>Silent failure</td><td>fabricates a result to avoid an empty one</td><td><b>Checkpoints</b> + 3-strike <b>human escalation</b> — never a fabricated booking</td></tr>
+  </table>
+
+  <h2><span class="n">2</span>The idea — wrap the agent in a harness</h2>
+  <p class="muted">All authority — input validation, link minting, state, telemetry — is moved
+    <b style="color:var(--text)">out of the agent and into a deterministic harness that surrounds it.</b>
+    The harness <b style="color:var(--text)">encloses</b> the agent; it is not a step after it.</p>
+
+  <div class="flow avoid">
+    <div class="stage"><b>🧳 Request</b>budget · priorities<br>party · services</div>
+    <div class="arrow">→</div>
+    <div class="wrapbox">
+      <span class="label">🛡 ZERO-TRUST HARNESS — wraps every agent</span>
+      <div class="agents-row">🤖 Untrusted agents — propose IDs ONLY &nbsp;·&nbsp; ✈ Flight &nbsp; 🏨 Hotel &nbsp; 🚗 Car &nbsp; 📍 Experience &nbsp; 🍽 Food</div>
+      <div class="pillars-row">
+        <div class="pill">① GUARDRAILS</div><div class="pill">② CHECKPOINTS</div>
+        <div class="pill">③ MATERIAL HANDLING</div><div class="pill">④ ALARMS</div>
+      </div>
+    </div>
+    <div class="arrow">→</div>
+    <div class="stage"><b>✅ Safe itinerary</b>whitelisted links<br>cost summary</div>
+  </div>
+</div>
+
+<!-- ============ PAGE 2 ============ -->
+<div class="page break">
+  <h2><span class="n">3</span>System architecture — five layers</h2>
+  <p class="muted">Nothing crosses a layer boundary unvalidated. Layer 4 (the harness) sits in the gap
+    between an agent's <i>proposal</i> and a <i>booking</i>.</p>
+  <div class="layers avoid">
+    <div class="layer l1"><div class="lh">LAYER 1 · Front End</div>
+      <div class="lb">CLI (<code>main.py</code>) or Streamlit web app — trip request in → HTML itinerary + whitelisted links out</div></div>
+    <div class="layer l2"><div class="lh">LAYER 2 · Orchestrator</div>
+      <div class="lb"><b>LangGraph StateGraph</b> — runs nodes, wraps each with the harness, routes on the checkpoint verdict, replays from last good state, escalates to a human via <code>interrupt()</code></div></div>
+    <div class="layer l4"><div class="lh">LAYER 4 · 🛡 Harness</div>
+      <div class="lb"><b>The four pillars, all outside the agents:</b> ① Guardrails &nbsp; ② Checkpoints &nbsp; ③ Material Handling &nbsp; ④ Alarms &nbsp;—&nbsp; <code>node_wrapper.py</code> composes all four around one untrusted agent</div></div>
+    <div class="layer l3"><div class="lh">LAYER 3 · Agents</div>
+      <div class="lb"><span class="ag-chips">Untrusted, swappable workers · one contract: <code>run(scoped_input, feedback) → Proposal</code> &nbsp; <span>✈ Flight</span><span>🏨 Hotel</span><span>🚗 Car</span><span>📍 Experience</span><span>🍽 Food</span></span></div></div>
+    <div class="layer l5"><div class="lh">LAYER 5 · Data</div>
+      <div class="lb"><span class="dat-chips">The only layer that persists: <span>SQLite checkpoints ./runs/&lt;id&gt;/</span><span>Seed inventory (ground truth)</span><span>UserStore session memory</span><span>Docker — no ambient trust</span></span></div></div>
+  </div>
+
+  <h3 style="margin-top:12px;color:var(--harness)">Technology — and what each piece earns us</h3>
+  <table class="avoid">
+    <tr><th>Concern</th><th>Built with</th><th>Why</th></tr>
+    <tr><td><b>Orchestration</b></td><td>LangGraph <code>StateGraph</code></td><td>state machine + checkpointing + replay + <code>interrupt()</code> for free</td></tr>
+    <tr><td><b>Trust boundary</b></td><td>Pydantic strict models</td><td>the contract is <i>declared in types</i> — an injection string can't become an instruction</td></tr>
+    <tr><td><b>Workers</b></td><td>Python (template / Claude swap-in)</td><td>one <code>Protocol</code>; provider-agnostic — Claude <code>claude-opus-4-8</code> earns no extra trust</td></tr>
+    <tr><td><b>Telemetry</b></td><td>structured JSON → Splunk (HEC)</td><td>live security observability for an AI system</td></tr>
+    <tr><td><b>Runtime</b></td><td>Docker (non-root, <code>--network none</code>)</td><td>proves zero ambient trust — the seeded demo needs no network egress</td></tr>
+  </table>
+
+  <h2><span class="n">4</span>The four pillars — what the agent gets for free</h2>
+  <div class="grid2">
+    <div class="card acc avoid"><h3><span class="ic">①</span> Guardrails</h3>
+      <ul>
+        <li><b>Input sandbox</b> — raw request → strict <code>TripProfile</code> (Pydantic); only typed, range-checked fields flow on.</li>
+        <li><b>IDs-not-URLs</b> — every proposal subclasses <code>NoUrlModel</code>; any URL is rejected.</li>
+        <li><b>Shadow Auditor</b> — a 2nd deterministic grader re-checks each claim against ground-truth inventory (rating ≥ floor, price ≤ budget, claim == reality, dietary gate).</li>
+        <li><b>Economic + Budget Guardrail</b> — token/$ ceilings; caps/floors keep the budget split realistic.</li>
+      </ul></div>
+    <div class="card acc avoid"><h3><span class="ic">②</span> Checkpoints</h3>
+      <ul>
+        <li>Explicit <b>pass/fail gate after every node</b> (schema valid + auditor passed), with the tripped criterion broken out for telemetry.</li>
+        <li>State persists <b>only on PASS</b> → a failed node <b>replays from the last good checkpoint</b>; upstream work is never recomputed.</li>
+        <li><b>3 strikes → human escalation</b>, never a fabricated booking.</li>
+      </ul></div>
+    <div class="card acc avoid"><h3><span class="ic">③</span> Material Handling</h3>
+      <ul>
+        <li>A declared <code>SCOPE</code> table <b>is</b> the authority policy — clean interfaces in and out.</li>
+        <li><code>route()</code> projects the profile down to one agent's typed slice; <code>assert_scoped()</code> is a hard invariant.</li>
+        <li><b>Least authority by construction</b> — money agents never receive <code>diet</code>/<code>cuisine</code>/<code>activities</code>; the Flight agent can't leak data it never sees.</li>
+      </ul></div>
+    <div class="card acc avoid"><h3><span class="ic">④</span> Alarms</h3>
+      <ul>
+        <li>Every tripped rule emits one structured JSON record: <code>type · severity · context · recommended_action</code>.</li>
+        <li>Severity = <span style="color:var(--crit)">CRITICAL</span> / <span style="color:var(--warn)">WARNING</span> / <span style="color:var(--ok)">INFO</span>; alarms only <b>observe</b> — control flow is decided by the checkpoint logic.</li>
+        <li><b>Splunk-ready</b> — set <code>SPLUNK_HEC_URL/TOKEN</code> for a live HTTP Event Collector sink (stdlib, no SDK).</li>
+      </ul></div>
+  </div>
+</div>
+
+<!-- ============ PAGE 3 ============ -->
+<div class="page break">
+  <h2><span class="n">5</span>How the agents work &amp; communicate — the per-agent gauntlet</h2>
+  <p class="muted">Agents never talk to each other and never touch shared state. <b style="color:var(--text)">All
+    communication flows through the harness.</b> Every agent runs this identical gauntlet, so an agent
+    gains no authority by being "smarter."</p>
+  <div class="gaunt avoid">
+    <div class="step crit"><div class="num">1</div><div class="body"><b>Economic Governor</b> — over the token/$ budget? → CRITICAL alarm + halt before the agent even runs.</div></div>
+    <div class="stepconn"></div>
+    <div class="step"><div class="num">2</div><div class="body"><b>Material Handler · route()</b> — scope the validated profile to this agent's least-authority slice (allocated budget + party size only).</div></div>
+    <div class="stepconn"></div>
+    <div class="step"><div class="num">3</div><div class="body" style="border-color:var(--agent);background:var(--agent-fill)"><b>🤖 Untrusted agent · run(scoped, feedback)</b> — proposes IDs + <code>claimed_*</code> numbers. <b>No URLs · no free text · no state writes.</b> Honors feedback from a prior failure.</div></div>
+    <div class="stepconn"></div>
+    <div class="step"><div class="num">4</div><div class="body"><b>Output Guardrail + Shadow Auditor</b> — re-validate schema &amp; reject URLs; look the ID up in ground truth; compare claim vs reality (hallucinated ID, inflated rating, threshold/dietary violation).</div></div>
+    <div class="stepconn"></div>
+    <div class="step"><div class="num">5</div><div class="body"><b>Checkpoint · evaluate()</b> — combine the deterministic signals into one explicit verdict.</div></div>
+    <div class="stepconn"></div>
+    <div class="step ok"><div class="num">✓</div><div class="body"><b style="color:var(--ok)">PASS</b> → Link Builder mints a whitelisted link from the validated ID → persist state → INFO alarm → advance to next agent. &nbsp;|&nbsp; <b style="color:var(--warn)">FAIL</b> → feedback + WARNING → replay same node. &nbsp;|&nbsp; <b style="color:var(--crit)">3rd FAIL</b> → CRITICAL → human <code>interrupt()</code>.</div></div>
+  </div>
+
+  <div class="callout avoid">
+    <b>The two communication rules that make it zero-trust:</b><br>
+    ❌ raw user text never reaches an agent &nbsp;·&nbsp; ❌ agents never emit URLs or write state &nbsp;·&nbsp;
+    ❌ money agents never see diet / cuisine / activities. <b>Inbound</b> = typed scoped slice;
+    <b>outbound</b> = opaque IDs + claims, independently re-graded.
+  </div>
+
+  <h2><span class="n">6</span>How the final outcome is produced</h2>
+  <table class="avoid">
+    <tr><th>Stage</th><th>What the harness does</th></tr>
+    <tr><td style="color:var(--harness);font-weight:700">allocate</td><td>Split one <code>total_budget</code> by priority; <b>Budget Guardrail</b> caps/floors it; if preferences &gt; budget → <b>pause pre-booking</b> (accept overage / apply cuts).</td></tr>
+    <tr><td style="color:var(--harness);font-weight:700">agents</td><td>Run <b>only the included <code>services</code></b> (drive own car → no flight/car: $0, never execute), each through the §5 gauntlet.</td></tr>
+    <tr><td style="color:var(--harness);font-weight:700">reconcile</td><td>Sum the <b>actual validated costs</b> vs budget; a residual overrun is a WARNING, never a hidden charge.</td></tr>
+    <tr><td style="color:var(--harness);font-weight:700">assemble</td><td>Render the safe HTML itinerary — harness-built whitelisted links + cost summary. &nbsp; <b>Or</b> → human escalation, never a fabrication.</td></tr>
+  </table>
+
+  </div>
+
+  <!-- ============ PAGE 4 ============ -->
+  <div class="page break">
+  <h2><span class="n">7</span>Hackathon requirements → how we delivered</h2>
+  <p class="muted">The brief: <i>"Build a harness — a framework an AI agent lives inside, defining what the agent
+    gets for free: guardrails that constrain behavior, checkpoints that evaluate outputs, clean interfaces
+    for passing material in and out, and alarms that fire when something goes wrong."</i></p>
+  <table class="req avoid">
+    <tr><th>Requirement</th><th>How the AI Travel Harness delivers it</th><th></th></tr>
+    <tr><td>A framework the agent lives inside</td><td><code>node_wrapper.make_harness_node()</code> composes all four pillars around every agent; LangGraph runs the wrapped nodes. Agents implement one <code>Protocol</code> and get validation, links, state &amp; telemetry for free.</td><td class="chk">✓</td></tr>
+    <tr><td>Guardrails that constrain behavior</td><td>Pydantic input sandbox + <code>NoUrlModel</code> output + <b>Shadow Auditor</b> regrade + Economic &amp; Budget guardrails. The agent may only propose an ID; everything else is denied by construction.</td><td class="chk">✓</td></tr>
+    <tr><td>Checkpoints that evaluate outputs</td><td>An explicit pass/fail gate after <b>every</b> node; state persists only on PASS; failures replay from the last good checkpoint; 3 strikes → human-in-the-loop.</td><td class="chk">✓</td></tr>
+    <tr><td>Clean interfaces in &amp; out</td><td><b>Material Handling</b>: a declared <code>SCOPE</code> table routes a typed, least-authority slice in and accepts only IDs out — <code>assert_scoped()</code> proves no out-of-scope field crosses.</td><td class="chk">✓</td></tr>
+    <tr><td>Alarms that fire on trouble</td><td>A structured-JSON <b>AlarmBus</b> (<code>type · severity · context · action</code>) with pluggable sinks — stderr, JSONL file, and a live <b>Splunk</b> HEC sink.</td><td class="chk">✓</td></tr>
+  </table>
+
+  <div class="callout avoid" style="border-color:var(--agent)">
+    <b style="color:var(--agent)">Beyond the brief:</b> a coordinator <b>Budget Allocator</b> with a pre-booking
+    overage interrupt, <b>optional agents</b> (run only what the trip needs), a dedicated <b>Food agent</b>
+    with a hard dietary safety gate, and a real <b>Claude swap-in</b> — proving the harness is provider-agnostic:
+    <b>swap any agent and not one line of the harness changes.</b>
+  </div>
+
+  <div class="footer avoid">
+    <div class="stat"><b>5</b> layers &nbsp;·&nbsp; <b>5</b> agents &nbsp;·&nbsp; <b>4</b> pillars &nbsp;·&nbsp; <b>27</b> passing adversarial tests &nbsp;·&nbsp; <b>100%</b> offline &amp; deterministic</div>
+    <div class="stack">Python · LangGraph (state · checkpoint · replay · interrupt) · Pydantic · Docker · Splunk &nbsp;—&nbsp; <i>Travel is just the demo; the harness is the product.</i></div>
+  </div>
+</div>
+
+</body>
+</html>
