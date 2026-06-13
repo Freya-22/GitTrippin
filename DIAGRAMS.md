@@ -1,4 +1,4 @@
-# AI Travel Harness — Diagrams
+# GitTrippin — Diagrams
 
 All diagrams are [Mermaid](https://mermaid.js.org/) — they render on GitHub, in VS Code (Markdown
 preview), and paste into most slide tools. Edit them as text; no image files to maintain.

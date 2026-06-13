@@ -1,4 +1,4 @@
-"""AI Travel Harness — Streamlit web front end (Layer 1, web edition).
+"""GitTrippin — Streamlit web front end (Layer 1, web edition).
 
 A pure-Python web UI over the existing harness. It imports the same functions the
 CLI uses — input_guardrail, build_graph, resume_run, replay_from_checkpoint,
@@ -25,7 +25,7 @@ from harness.itinerary import render_html
 from harness.orchestrator.graph import build_graph, replay_from_checkpoint, resume_run
 from harness.schemas import CarTier, Diet, ExperienceTier, FlightClass, FoodTier, HotelTier
 
-st.set_page_config(page_title="AI Travel Harness", page_icon="🛡", layout="wide")
+st.set_page_config(page_title="GitTrippin", page_icon="🛡", layout="wide")
 SS = st.session_state
 
 SEVERITY_ICON = {"CRITICAL": "🔴", "WARNING": "🟠", "INFO": "🔵"}
@@ -70,7 +70,7 @@ def _replay() -> None:
 # --------------------------------------------------------------------------- #
 # Sidebar — the trip request form
 # --------------------------------------------------------------------------- #
-st.sidebar.title("🛡 AI Travel Harness")
+st.sidebar.title("🛡 GitTrippin")
 st.sidebar.caption("Agents are untrusted. The harness governs them.")
 
 with st.sidebar.form("trip"):
@@ -133,7 +133,8 @@ if submitted:
 # --------------------------------------------------------------------------- #
 # Main area
 # --------------------------------------------------------------------------- #
-st.title("Zero-Trust Travel Planner")
+st.title("GitTrippin")
+st.caption("Zero-trust travel planning — agents are untrusted; the harness governs them.")
 
 if "final" not in SS:
     st.info("Fill in the trip request on the left and hit **Plan trip**. "

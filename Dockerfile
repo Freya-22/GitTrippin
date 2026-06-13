@@ -19,6 +19,6 @@ USER harness
 
 # No network egress is required for the seeded demo — the agents read from
 # ./harness/data/seed. Run with `--network none` to prove zero ambient trust:
-#   docker run --rm --network none ai-travel-harness run --user demo --trip trip.json
+#   docker run --rm --network none gittrippin run --user demo --trip trip.json
 ENTRYPOINT ["python", "main.py"]
 CMD ["run", "--trip", "trip.json"]

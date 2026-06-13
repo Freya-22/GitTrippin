@@ -1,4 +1,4 @@
-# AI Travel Harness — runtime dependencies
+# GitTrippin — runtime dependencies
 # Layer 2 orchestration: deterministic state machine, checkpointing, replay
 langgraph>=0.2.0
 langchain-core>=0.3.0

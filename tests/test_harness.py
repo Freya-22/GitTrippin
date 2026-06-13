@@ -1,4 +1,4 @@
-"""Adversarial / behavioral test suite for the AI Travel Harness.
+"""Adversarial / behavioral test suite for the GitTrippin.
 
 Each test asserts that a specific zero-trust control holds. Run with:  pytest -q
 The suite is fully offline and deterministic (seed inventory, no network/LLM).

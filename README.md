@@ -1,4 +1,4 @@
-# AI Travel Harness
+# GitTrippin
 
 A **zero-trust framework that constrains and governs untrusted LLM agents**, demonstrated on an
 agentic travel planner (Flight · Hotel · Rental-Car · Experience · Food). The agents are the product;

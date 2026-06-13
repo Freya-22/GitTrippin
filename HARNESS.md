@@ -1,4 +1,4 @@
-# HARNESS.md — AI Travel Harness Architecture
+# HARNESS.md — GitTrippin Architecture
 
 A zero-trust framework that constrains and governs untrusted LLM agents inside an agentic
 travel planner. This document is the engineering reference: system design, the LangGraph state
@@ -404,9 +404,9 @@ pytest -q
 ### Containerized runtime (Layer 5)
 
 ```bash
-docker build -t ai-travel-harness .
+docker build -t gittrippin .
 # Prove zero ambient trust — the seeded demo needs no network egress:
-docker run --rm --network none -v ${PWD}/runs:/app/runs ai-travel-harness run --trip trip.json
+docker run --rm --network none -v ${PWD}/runs:/app/runs gittrippin run --trip trip.json
 ```
 
 ---

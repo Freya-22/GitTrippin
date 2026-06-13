@@ -1,4 +1,4 @@
-# AI Travel Harness — Architecture (HLD)
+# GitTrippin — Architecture (HLD)
 
 *A zero-trust framework that an untrusted AI agent lives inside. Travel is the demo; the **harness** is the product.*
 

@@ -1,4 +1,4 @@
-# AI Travel Harness — One-Page Infographic
+# GitTrippin — One-Page Infographic
 
 > Use this as the poster / README hero / title slide. The Mermaid block is the "hero" visual;
 > the **Design spec** at the bottom is what you hand to a designer (or paste into Figma/Canva) to
@@ -6,7 +6,7 @@
 
 ---
 
-## 🛡 AI TRAVEL HARNESS
+## 🛡 GitTrippin
 ### A zero-trust control layer that governs untrusted LLM agents
 
 **The agents are the product. The harness is what's defended.**
@@ -75,7 +75,7 @@ Stack: Python · LangGraph (state · checkpoint · replay · interrupt) · Pydan
 **Format:** single page / 16:9 title slide / poster. Portrait works for a printed one-pager; 16:9 for slides.
 
 **Layout (top → bottom):**
-1. **Header band** — shield icon + "AI TRAVEL HARNESS" (bold), subtitle below. Tagline in italic.
+1. **Header band** — shield icon + "GitTrippin" (bold), subtitle below. Tagline in italic.
 2. **Hero flow strip** (horizontal): `Request → Allocate → [Agents box] → [Harness box] → Safe Itinerary`.
    Make the **Harness box visually enclose/underlap the Agents box** to convey "wraps every agent."
 3. **Four pillar cards** — equal-width, icon + title + 1-line each.

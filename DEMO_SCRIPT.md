@@ -1,4 +1,4 @@
-# AI Travel Harness — Demo Runbook
+# GitTrippin — Demo Runbook
 
 A tight **~6-minute** live demo built around the moments that land: the harness *catching* an
 untrusted agent and recovering. Every command is offline and deterministic — it can't flake on stage.

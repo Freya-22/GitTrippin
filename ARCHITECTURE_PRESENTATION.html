@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>AI Travel Harness — System Architecture</title>
+<title>GitTrippin — System Architecture</title>
 <style>
   :root{
     --bg:#0e0e1a; --panel:#15152a; --panel2:#1b1b34;
@@ -130,7 +130,7 @@
 
   <div class="hero avoid">
     <span class="tag">🛡 Hackathon Submission · System Architecture</span>
-    <h1>AI Travel Harness</h1>
+    <h1>GitTrippin</h1>
     <div class="sub">A <b>zero-trust framework that an untrusted AI agent lives inside.</b>
       Five agents plan a trip — Flight · Hotel · Car · Experience · Food — but
       <b>the agents are the product; the harness is what is being defended and judged.</b></div>
@@ -282,7 +282,7 @@
     gets for free: guardrails that constrain behavior, checkpoints that evaluate outputs, clean interfaces
     for passing material in and out, and alarms that fire when something goes wrong."</i></p>
   <table class="req avoid">
-    <tr><th>Requirement</th><th>How the AI Travel Harness delivers it</th><th></th></tr>
+    <tr><th>Requirement</th><th>How the GitTrippin delivers it</th><th></th></tr>
     <tr><td>A framework the agent lives inside</td><td><code>node_wrapper.make_harness_node()</code> composes all four pillars around every agent; LangGraph runs the wrapped nodes. Agents implement one <code>Protocol</code> and get validation, links, state &amp; telemetry for free.</td><td class="chk">✓</td></tr>
     <tr><td>Guardrails that constrain behavior</td><td>Pydantic input sandbox + <code>NoUrlModel</code> output + <b>Shadow Auditor</b> regrade + Economic &amp; Budget guardrails. The agent may only propose an ID; everything else is denied by construction.</td><td class="chk">✓</td></tr>
     <tr><td>Checkpoints that evaluate outputs</td><td>An explicit pass/fail gate after <b>every</b> node; state persists only on PASS; failures replay from the last good checkpoint; 3 strikes → human-in-the-loop.</td><td class="chk">✓</td></tr>

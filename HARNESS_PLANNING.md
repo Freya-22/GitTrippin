@@ -1,4 +1,4 @@
-# Harness Planning Document — AI Travel Harness
+# Harness Planning Document — GitTrippin
 
 **A zero-trust control layer that constrains and governs untrusted LLM travel agents.**
 *One page. The agents are the product; the harness is what we are defending.*

@@ -163,7 +163,7 @@ def cmd_resume(args: argparse.Namespace) -> int:
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(prog="ai-travel-harness")
+    parser = argparse.ArgumentParser(prog="gittrippin")
     sub = parser.add_subparsers(dest="command", required=True)
 
     p_run = sub.add_parser("run", help="plan a trip from a validated request")
