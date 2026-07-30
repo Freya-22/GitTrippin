@@ -215,6 +215,6 @@ flowchart TD
 - 🔌 **Provider-agnostic** — swap any agent (template → Claude) and **not one line of the harness changes**. *Travel is just the demo.*
 
 ```
-5 layers · 5 agents · 4 pillars · 27 passing adversarial tests · 100% offline & deterministic
+5 layers · 5 agents · 4 pillars · 38 passing control tests · 100% offline & deterministic
 Stack: Python · LangGraph (state · checkpoint · replay · interrupt) · Pydantic · Docker · Splunk
 ```

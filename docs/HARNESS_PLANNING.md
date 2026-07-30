@@ -1,7 +1,7 @@
 # Harness Planning Document — GitTrippin
 
 **A zero-trust control layer that constrains and governs untrusted LLM travel agents.**
-*One page. The agents are the product; the harness is what we are defending.*
+*One page. The harness is the product; the agents are what it defends against.*
 
 ---
 

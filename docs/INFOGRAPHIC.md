@@ -9,7 +9,7 @@
 ## 🛡 GitTrippin
 ### A zero-trust control layer that governs untrusted LLM agents
 
-**The agents are the product. The harness is what's defended.**
+**The harness is the product. The agents are what it defends against.**
 Agents only *propose IDs* — the harness validates every claim, builds the links, persists state, and raises alarms.
 
 ---
@@ -63,7 +63,7 @@ flowchart LR
 ### By the numbers
 
 ```
-5 layers   ·   5 agents   ·   4 pillars   ·   27 passing tests   ·   100% offline & deterministic
+5 layers   ·   5 agents   ·   4 pillars   ·   38 passing control tests   ·   100% offline & deterministic
 Stack: Python · LangGraph (state · checkpoint · replay · interrupt) · Pydantic · Docker · Splunk
 ```
 

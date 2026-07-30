@@ -5,8 +5,8 @@ travel planner. This document is the engineering reference: system design, the L
 flow, the Pydantic validation contract, the four guardrail pillars, and the procedure for
 swapping an agent node.
 
-> **Design axiom.** The agents are the product; the *harness* is what is being defended and
-> judged. Every agent is an untrusted, replaceable worker. All authority — input validation,
+> **Design axiom.** The *harness* is the product; the agents are what it defends against.
+> Every agent is an untrusted, replaceable worker. All authority — input validation,
 > link construction, state persistence, and telemetry — lives **outside** the agents. An agent
 > proposes IDs and nothing more. The harness independently re-grades every claim against data
 > the agent does not control.
@@ -397,7 +397,7 @@ python main.py resume --id hitl001 --decision "approve exception"  # resolve & c
 # Replay a persisted run from its last good checkpoint (no restart)
 python main.py replay --id demo001 --from hotel
 
-# Run the adversarial test suite (27 tests, fully offline)
+# Run the adversarial control suite (38 tests, fully offline)
 pytest -q
 ```
 
@@ -426,7 +426,7 @@ docker run --rm --network none -v ${PWD}/runs:/app/runs gittrippin run --trip tr
 | **Cross-agent isolation** | Flight agent's scoped payload carries no `diet`/`cuisines`/`activities`; party size & allocated budget are shared, food prefs are not. |
 | **Human escalation (true interrupt)** | unserviceable route → 3 consecutive failures → CRITICAL `human_in_the_loop` alarm → graph **pauses on `interrupt()`** (exit 3); `resume --decision ...` injects the operator's call, recorded as `hitl.operator_decision`. No fabricated booking. |
 | **Replay** | `replay --id demo001` resumes from the persisted checkpoint and returns the validated final state without recomputation. |
-| **Test suite** | `pytest -q` → **27 passed** (guardrails, auditor failure modes incl. dietary gate, isolation, budget caps/estimate/cuts, optional/skipped agents, food proximity + reach filter, quality fallback, harness-built links, within-budget reconcile, overage accept+cut, 3-strike interrupt + resume). |
+| **Test suite** | `pytest -q` → **38 passed** (guardrails, auditor failure modes incl. dietary gate, isolation, budget caps/estimate/cuts, optional/skipped agents, food proximity + reach filter, quality fallback, harness-built links, within-budget reconcile, overage accept+cut, 3-strike interrupt + resume). |
 
 > **Key idea, restated.** The four pillars live outside every agent — validation, link-building,
 > state, and alarms are decoupled from the untrusted AI. The agent's word is never sufficient;

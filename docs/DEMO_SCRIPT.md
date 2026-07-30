@@ -13,7 +13,7 @@ untrusted agent and recovering. Every command is offline and deterministic — i
 # 1. Install once
 pip install -r requirements.txt -r requirements-dev.txt
 
-# 2. Prove it's green (say "27 tests, fully offline" out loud)
+# 2. Prove it's green (say "38 control tests, fully offline" out loud)
 pytest -q
 
 # 3. Warm the import cache + clear old runs so the demo is clean
@@ -133,7 +133,7 @@ python main.py replay --id demo          # resumes from persisted checkpoint, no
 ## Cheat sheet (all commands)
 
 ```powershell
-pytest -q                                              # 27 passed
+pytest -q                                              # 38 passed
 python main.py run    --trip trip.json          --id demo
 python main.py run    --trip trip_luxury.json   --id lux
 python main.py resume --id lux  --decision cut          # or: accept

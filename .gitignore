@@ -12,8 +12,14 @@ env/
 # Harness run artifacts (checkpoints + records)
 runs/
 
+# Private interview prep — never publish
+NOTES_INTERVIEW.md
+
 # OS / editor
 .DS_Store
 Thumbs.db
 .vscode/
 .idea/
+
+# Claude Code local settings
+.claude/
